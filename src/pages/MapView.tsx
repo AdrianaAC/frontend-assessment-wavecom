@@ -3,6 +3,11 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useState, useMemo, useCallback } from "react";
 import "./MapView.css";
 
+// Logic working. Needs:
+// - Search bar allows keyboard interaction
+// - Next and Previous buttons are disabled when there are no more locations to navigate
+// - More mocking locations, test search bar with more locations
+
 const MapView = () => {
   const [viewState, setViewState] = useState({
     longitude: -8.6317803,
