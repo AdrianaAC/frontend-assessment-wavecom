@@ -1,0 +1,26 @@
+.productsPage {
+  background-color: violet;
+width: 100%;
+height: 97vh;
+}
+
+.cardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  width: 80%;
+  height: 90%;
+  margin: 0 auto;
+  background-color: red;
+  border: 10px;
+}
+
+.generalCard {
+  flex: 1 1 calc(25% - 16px);
+  width: 200px;
+  min-width: 200px;
+  height: 300px;
+  margin-bottom: 16px;
+  background-color: blue;
+}

@@ -7,6 +7,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import axios from "axios";
+import "./Products.css";
 
 const Products = () => {
   interface Product {
@@ -54,31 +55,14 @@ const Products = () => {
   }
 
   return (
-    <div className="h-screen w-screen p-4">
+    <div className="h-screen w-screen p-4 productsPage">
       <Typography variant="h4" component="h1" gutterBottom>
         Products
       </Typography>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "16px",
-          justifyContent: "center", // Center container on the page
-          width: "70%", // Set container to 80% of the screen width
-          margin: "0 auto", // Center container horizontally
-        }}
-      >
-        {products.map((product) => (
-          <div
-            key={product.name}
-            style={{
-              flex: "1 1 calc(25% - 16px)", // Allows a max of 4 cards per row
-              width: "200px", // Limits each card's width for uniformity
-              minWidth: "200px",
-              height: "300px",
-              marginBottom: "16px",
-            }}
-          >
+      <div className="cardsContainer">
+        <p>Products will be displayed here</p>
+        {/* {products.map((product) => (
+          <div key={product.name} className="generalCard">
             <Card style={{ height: "300px" }}>
               <CardMedia
                 component="img"
@@ -108,7 +92,7 @@ const Products = () => {
               </CardContent>
             </Card>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );
