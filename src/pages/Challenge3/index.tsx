@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const getRandomNumberApi = new Promise<number>((resolve) => {
-  // simuate delay
+  // Simulate delay
   setTimeout(() => {
     fetch(
       "https://corsproxy.io/?" +
@@ -18,16 +18,19 @@ function Challenge3() {
   const [randomApi, setRandomApi] = useState(0);
 
   useEffect(() => {
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       getRandomNumberApi.then((num) => {
         setRandomApi(num);
       });
     }, 1000);
-  });
+
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []); // Empty dependency array to only run on mount and unmount
 
   return (
     <>
-      There is an api recurrent request simulation on this page, and this state
+      There is an API recurrent request simulation on this page, and this state
       is not updating, we want to keep the promise so that it can scale and do
       more work
       <br />
