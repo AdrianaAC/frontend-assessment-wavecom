@@ -3,10 +3,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useState, useMemo, useCallback } from "react";
 import "./MapView.css";
 
-// Logic working. Needs:
-// - Search bar allows keyboard interaction
-// - Next and Previous buttons are disabled when there are no more locations to navigate
-// - More mocking locations, test search bar with more locations
 
 const MapView = () => {
   const [viewState, setViewState] = useState({
@@ -19,6 +15,7 @@ const MapView = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1); // Track the currently highlighted item
 
   //WaveCom locations
   const locations: { [key: string]: { latitude: number; longitude: number } } =
@@ -30,6 +27,10 @@ const MapView = () => {
           latitude: -25.952198177765005,
           longitude: 32.592926415365056,
         },
+        Hogwarts: { latitude: 57.546979, longitude: -5.815523 },
+        MonicasApartment: { latitude: 40.732306, longitude: -73.994218 },
+        PortAventuraPark: { latitude: 41.086686, longitude: 1.154858 },
+        SpainCasaDeMoeda: { latitude: 40.413774, longitude: -3.707398 },
       }),
       []
     );
@@ -71,6 +72,7 @@ const MapView = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     setShowDropdown(true);
+    setActiveIndex(-1); // Reset active index on new input
   };
 
   const handleLocationSelect = (key: string) => {
@@ -78,6 +80,7 @@ const MapView = () => {
     goToLocation(index);
     setSearchQuery(key);
     setShowDropdown(false);
+    setActiveIndex(-1);
   };
 
   const filteredLocations = useMemo(
@@ -87,6 +90,29 @@ const MapView = () => {
       ),
     [searchQuery, locationKeys]
   );
+
+  const handleSearchKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (filteredLocations.length > 0) {
+      if (event.key === "ArrowDown") {
+        // Move selection down
+        setActiveIndex(
+          (prevIndex) => (prevIndex + 1) % filteredLocations.length
+        );
+      } else if (event.key === "ArrowUp") {
+        // Move selection up
+        setActiveIndex((prevIndex) =>
+          prevIndex <= 0 ? filteredLocations.length - 1 : prevIndex - 1
+        );
+      } else if (event.key === "Enter") {
+        // Select the active item
+        if (activeIndex >= 0 && activeIndex < filteredLocations.length) {
+          handleLocationSelect(filteredLocations[activeIndex]);
+        }
+      }
+    }
+  };
 
   return (
     <div className="mapDashboard">
@@ -133,15 +159,22 @@ const MapView = () => {
             id="locationSearch"
             value={searchQuery}
             onChange={handleSearchChange}
+            onKeyDown={handleSearchKeyDown} // Add keyboard listener
             placeholder="Type a location..."
           />
           {showDropdown && (
             <div className="dropdown">
-              {filteredLocations.map((key) => (
+              {filteredLocations.map((key, index) => (
                 <div
                   key={key}
-                  className="dropdownItem"
+                  className={`dropdownItem ${
+                    index === activeIndex ? "active" : ""
+                  }`}
                   onClick={() => handleLocationSelect(key)}
+                  style={{
+                    backgroundColor: index === activeIndex ? "#ddd" : "white", // Highlight active item
+                    cursor: "pointer",
+                  }}
                 >
                   {key}
                 </div>
@@ -157,6 +190,11 @@ const MapView = () => {
         <button
           onClick={goToNextLocation}
           disabled={currentIndex === locationKeys.length - 1}
+          className={
+            currentIndex === locationKeys.length - 1
+              ? "disabled"
+              : "navigationButton"
+          }
         >
           Next
         </button>

@@ -39,6 +39,10 @@
   background-color: green;
 }
 
+.disabled {
+  background-color: hotpink;
+}
+
 /* button {
   display: block;
   margin-bottom: 5px;
