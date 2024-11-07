@@ -1,16 +1,28 @@
+// Challenge2.tsx
 import { Badge } from "antd";
+import { useEffect, useState } from "react";
 
-function Challenge2() {
+interface Challenge2Props {
+  userPermissions: string[];
+}
+
+function Challenge2({ userPermissions }: Challenge2Props) {
+  const [hasRootAccess, setHasRootAccess] = useState(false);
+
+  useEffect(() => {
+    // Check if "root" is in the userPermissions array
+    setHasRootAccess(userPermissions.includes("root"));
+  }, [userPermissions]);
+
   return (
     <>
-      In this Challenge we need to show user has root access to content when
-      requesting from GET from the user permissions can change in run time, You
-      can use Badge from antd or other component to show if root is enabled or
-      not Permissions data is stored inside App.tsx file on userPermissions
-      state
+      <div>
+        In this Challenge, we need to show if the user has root access to content in real-time. 
+        The `userPermissions` data is updated every second.
+      </div>
       <br />
       Root Enabled:&nbsp;
-      <Badge status="error" />
+      <Badge status={hasRootAccess ? "success" : "error"} text={hasRootAccess ? "Enabled" : "Disabled"} />
     </>
   );
 }

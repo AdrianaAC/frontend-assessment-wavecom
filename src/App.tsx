@@ -12,11 +12,10 @@ const Challenge2 = lazy(() => import("./pages/Challenge2"));
 const Challenge3 = lazy(() => import("./pages/Challenge3"));
 
 function randomIntFromInterval(min: number, max: number) {
-  // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-// api permission simulation
+// API permission simulation
 function fetchApiPermissions(userID: string) {
   const aclPermissions: { [k: string]: string } = {
     userID,
@@ -30,51 +29,16 @@ function fetchApiPermissions(userID: string) {
 
   return new Promise<typeof aclPermissions>((resolve) => {
     if (randomIntFromInterval(0, 1)) {
-      // random root permissions
+      // Randomly remove root permission
       delete aclPermissions.root;
     }
-
     resolve(cloneDeep(aclPermissions));
   });
 }
 
-const routes = [
-  {
-    path: "/map",
-    children: <MapView />,
-    exact: true,
-  },
-  {
-    path: "/products",
-    children: <Products />,
-    exact: true,
-  },
-  {
-    path: "/challenge1",
-    children: <Challenge1 />,
-    exact: false,
-  },
-  {
-    path: "/challenge2",
-    children: <Challenge2 />,
-    exact: true,
-  },
-  {
-    path: "/challenge3",
-    children: <Challenge3 />,
-    exact: true,
-  },
-];
-
 function App() {
-  const [userPermissions, setUserPermissions] = useState({});
-  // useEffect(() => {
-  //   // simulation of permissions checking
-  //   setInterval(() => {
-  //     // parameter api simulation
-  //     fetchApiPermissions("user_1234").then(setUserPermissions);
-  //   }, 5000);
-  // }, []);
+  const [userPermissions, setUserPermissions] = useState<{ [k: string]: string }>({});
+
   useEffect(() => {
     const fetchPermissions = async () => {
       const permissions = await fetchApiPermissions("user_1234");
@@ -82,10 +46,39 @@ function App() {
     };
 
     fetchPermissions();
-    const intervalId = setInterval(fetchPermissions, 30000); // Fetch every 30 seconds
+    const intervalId = setInterval(fetchPermissions, 30000);
 
-    return () => clearInterval(intervalId); // Clear interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
+
+  const routes = [
+    {
+      path: "/map",
+      children: <MapView />,
+      exact: true,
+    },
+    {
+      path: "/products",
+      children: <Products />,
+      exact: true,
+    },
+    {
+      path: "/challenge1",
+      children: <Challenge1 />,
+      exact: false,
+    },
+    {
+      path: "/challenge2",
+      // Convert userPermissions to an array for Challenge2 only
+      children: <Challenge2 userPermissions={Object.keys(userPermissions)} />,
+      exact: true,
+    },
+    {
+      path: "/challenge3",
+      children: <Challenge3 />,
+      exact: true,
+    },
+  ];
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -95,10 +88,11 @@ function App() {
           <Route exact path="/">
             <Redirect to="/map" />
           </Route>
-          {/* we need to check permissions on route to */}
-          {routes.map((route) => (
+          {routes.map((route, index) => (
             <Route
-              {...route}
+              key={index}
+              path={route.path}
+              exact={route.exact}
               children={pagelayout({ children: route.children })}
             />
           ))}
@@ -107,4 +101,5 @@ function App() {
     </Suspense>
   );
 }
+
 export default App;
