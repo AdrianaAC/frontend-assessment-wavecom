@@ -135,18 +135,8 @@ const MapView = () => {
                 latitude={latitude}
                 anchor="bottom"
               >
-                <div style={{ color: "red", fontSize: "24px" }}>📍</div>
-                <div
-                  style={{
-                    backgroundColor: "white",
-                    padding: "2px 5px",
-                    borderRadius: "3px",
-                    marginTop: "5px",
-                    textAlign: "center",
-                  }}
-                >
-                  {key}
-                </div>
+                <div className="markerIcon">📍</div>
+                <div className="markerLabel"> Wavecom {key}</div>
               </Marker>
             );
           })}

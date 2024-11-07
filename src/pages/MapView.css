@@ -100,6 +100,22 @@
   cursor: not-allowed;
 }
 
+.markerIcon{
+  color: red;
+  font-size: 24px;
+}
+
+.markerLabel {
+  font-size: 12px;
+  font-weight: bold;
+  color: #3339ff;
+  background-color: #ccc;
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 3px;
+  text-align: center;
+}
+
 /* button {
   display: block;
   margin-bottom: 5px;
