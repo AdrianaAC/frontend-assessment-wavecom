@@ -8,7 +8,7 @@ function Page2() {
     <Space direction="vertical">
       <Typography>Page 2 example</Typography>
       <Typography>try to go back to page 2 with back button</Typography>
-      <Typography.Link onClick={() => history.goBack()}>
+      <Typography.Link onClick={() => history.push("/page1")}>
         <ArrowLeftOutlined /> Go back
       </Typography.Link>
     </Space>
