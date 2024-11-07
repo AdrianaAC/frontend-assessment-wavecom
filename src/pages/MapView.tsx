@@ -2,7 +2,8 @@ import Map, { Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useState, useMemo, useCallback } from "react";
 import "./MapView.css";
-
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const MapView = () => {
   const [viewState, setViewState] = useState({
@@ -152,51 +153,58 @@ const MapView = () => {
         </Map>
       </div>
       <div className="selectContainer">
-        <div className="dropdownContainer">
-          <label htmlFor="locationSearch">Search Location: </label>
-          <input
-            type="text"
-            id="locationSearch"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            onKeyDown={handleSearchKeyDown} // Add keyboard listener
-            placeholder="Type a location..."
-          />
-          {showDropdown && (
-            <div className="dropdown">
-              {filteredLocations.map((key, index) => (
-                <div
-                  key={key}
-                  className={`dropdownItem ${
-                    index === activeIndex ? "active" : ""
-                  }`}
-                  onClick={() => handleLocationSelect(key)}
-                  style={{
-                    backgroundColor: index === activeIndex ? "#ddd" : "white", // Highlight active item
-                    cursor: "pointer",
-                  }}
-                >
-                  {key}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <label htmlFor="locationSearch">Search Location: </label>
+        <input
+          type="text"
+          id="locationSearch"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onKeyDown={handleSearchKeyDown} // Add keyboard listener
+          placeholder="Type a location..."
+        />
+        {showDropdown && (
+          <div className="dropdown">
+            {filteredLocations.map((key, index) => (
+              <button
+                key={key}
+                className={`dropdownItem ${
+                  index === activeIndex ? "active" : ""
+                }`}
+                onClick={() => handleLocationSelect(key)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleLocationSelect(key);
+                  }
+                }}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <div className="navigationContainer">
-        <button onClick={goToPreviousLocation} disabled={currentIndex === 0}>
-          Previous
+        <button
+          onClick={goToPreviousLocation}
+          disabled={currentIndex === 0}
+          title="Go to previous location"
+        >
+          <ArrowBackIcon
+            className={currentIndex === 0 ? "disabled" : "backIcon"}
+          />
         </button>
         <button
           onClick={goToNextLocation}
           disabled={currentIndex === locationKeys.length - 1}
-          className={
-            currentIndex === locationKeys.length - 1
-              ? "disabled"
-              : "navigationButton"
-          }
+          title="Go to next location"
         >
-          Next
+          <ArrowForwardIcon
+            className={
+              currentIndex === locationKeys.length - 1
+                ? "disabled"
+                : "forwardIcon"
+            }
+          />
         </button>
       </div>
     </div>
