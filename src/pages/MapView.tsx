@@ -2,11 +2,8 @@ import Map, { Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useState, useMemo, useCallback } from "react";
 import "./MapView.css";
-
-// Logic working. Needs:
-// - Search bar allows keyboard interaction
-// - Next and Previous buttons are disabled when there are no more locations to navigate
-// - More mocking locations, test search bar with more locations
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const MapView = () => {
   const [viewState, setViewState] = useState({
@@ -19,6 +16,7 @@ const MapView = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1); // Track the currently highlighted item
 
   //WaveCom locations
   const locations: { [key: string]: { latitude: number; longitude: number } } =
@@ -30,6 +28,10 @@ const MapView = () => {
           latitude: -25.952198177765005,
           longitude: 32.592926415365056,
         },
+        Hogwarts: { latitude: 57.546979, longitude: -5.815523 },
+        MonicasApartment: { latitude: 40.732306, longitude: -73.994218 },
+        PortAventuraPark: { latitude: 41.086686, longitude: 1.154858 },
+        SpainCasaDeMoeda: { latitude: 40.413774, longitude: -3.707398 },
       }),
       []
     );
@@ -71,6 +73,7 @@ const MapView = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     setShowDropdown(true);
+    setActiveIndex(-1); // Reset active index on new input
   };
 
   const handleLocationSelect = (key: string) => {
@@ -78,6 +81,7 @@ const MapView = () => {
     goToLocation(index);
     setSearchQuery(key);
     setShowDropdown(false);
+    setActiveIndex(-1);
   };
 
   const filteredLocations = useMemo(
@@ -87,6 +91,29 @@ const MapView = () => {
       ),
     [searchQuery, locationKeys]
   );
+
+  const handleSearchKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (filteredLocations.length > 0) {
+      if (event.key === "ArrowDown") {
+        // Move selection down
+        setActiveIndex(
+          (prevIndex) => (prevIndex + 1) % filteredLocations.length
+        );
+      } else if (event.key === "ArrowUp") {
+        // Move selection up
+        setActiveIndex((prevIndex) =>
+          prevIndex <= 0 ? filteredLocations.length - 1 : prevIndex - 1
+        );
+      } else if (event.key === "Enter") {
+        // Select the active item
+        if (activeIndex >= 0 && activeIndex < filteredLocations.length) {
+          handleLocationSelect(filteredLocations[activeIndex]);
+        }
+      }
+    }
+  };
 
   return (
     <div className="mapDashboard">
@@ -108,57 +135,66 @@ const MapView = () => {
                 latitude={latitude}
                 anchor="bottom"
               >
-                <div style={{ color: "red", fontSize: "24px" }}>📍</div>
-                <div
-                  style={{
-                    backgroundColor: "white",
-                    padding: "2px 5px",
-                    borderRadius: "3px",
-                    marginTop: "5px",
-                    textAlign: "center",
-                  }}
-                >
-                  {key}
-                </div>
+                <div className="markerIcon">📍</div>
+                <div className="markerLabel"> Wavecom {key}</div>
               </Marker>
             );
           })}
         </Map>
       </div>
       <div className="selectContainer">
-        <div className="dropdownContainer">
-          <label htmlFor="locationSearch">Search Location: </label>
-          <input
-            type="text"
-            id="locationSearch"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Type a location..."
-          />
-          {showDropdown && (
-            <div className="dropdown">
-              {filteredLocations.map((key) => (
-                <div
-                  key={key}
-                  className="dropdownItem"
-                  onClick={() => handleLocationSelect(key)}
-                >
-                  {key}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <label htmlFor="locationSearch">Search Location: </label>
+        <input
+          type="text"
+          id="locationSearch"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onKeyDown={handleSearchKeyDown} // Add keyboard listener
+          placeholder="Type a location..."
+        />
+        {showDropdown && (
+          <div className="dropdown">
+            {filteredLocations.map((key, index) => (
+              <button
+                key={key}
+                className={`dropdownItem ${
+                  index === activeIndex ? "active" : ""
+                }`}
+                onClick={() => handleLocationSelect(key)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleLocationSelect(key);
+                  }
+                }}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <div className="navigationContainer">
-        <button onClick={goToPreviousLocation} disabled={currentIndex === 0}>
-          Previous
+        <button
+          onClick={goToPreviousLocation}
+          disabled={currentIndex === 0}
+          title="Go to previous location"
+        >
+          <ArrowBackIcon
+            className={currentIndex === 0 ? "disabled" : "backIcon"}
+          />
         </button>
         <button
           onClick={goToNextLocation}
           disabled={currentIndex === locationKeys.length - 1}
+          title="Go to next location"
         >
-          Next
+          <ArrowForwardIcon
+            className={
+              currentIndex === locationKeys.length - 1
+                ? "disabled"
+                : "forwardIcon"
+            }
+          />
         </button>
       </div>
     </div>
