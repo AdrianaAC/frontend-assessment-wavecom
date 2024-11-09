@@ -62,14 +62,12 @@ const Products = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    
-// Filter products based only on the 'name' property
-setFilteredProducts(
-  products.filter((product) =>
-    product.name.toLowerCase().includes(query)
-  )
-);
-};
+
+    // Filter products based only on the 'name' property
+    setFilteredProducts(
+      products.filter((product) => product.name.toLowerCase().includes(query))
+    );
+  };
   // Toggle modal visibility
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -160,7 +158,12 @@ setFilteredProducts(
 
   return (
     <div className="h-screen w-screen p-4 productsPage">
-      <Typography variant="h4" component="h1" gutterBottom>
+      <Typography
+        variant="h4"
+        component="h1"
+        className="pageTitle"
+        gutterBottom
+      >
         Products
       </Typography>
       <div className="addContainer" style={{ display: "flex", gap: "16px" }}>
@@ -175,6 +178,7 @@ setFilteredProducts(
         <TextField
           label="Search Products"
           variant="outlined"
+          className="searchBar"
           value={searchQuery}
           onChange={handleSearchChange}
           fullWidth
@@ -184,29 +188,30 @@ setFilteredProducts(
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
             <div key={product.id} className="generalCard">
-              <Card className="card">
+              <Card className="card" style={{ position: "relative" }}>
                 {/* Delete Button at Top-Right */}
                 <IconButton
                   aria-label="delete"
                   style={{
                     position: "absolute",
-                    top: 0,
-                    right: 0,
-                    color: "red",
+                    top: "8px", // Adjust the top value if necessary
+                    right: "8px", // Adjust the right value if necessary
+                    color: "#ccc",
+                    zIndex: 1,
                   }}
                   onClick={() => handleDelete(product.id)}
                 >
                   <Close />
                 </IconButton>
-
-                <CardMedia
-                  component="img"
-                  height="150px"
-                  image={product.imgUrl}
-                  alt={product.name}
-                  className="cardMedia"
-                />
-                <CardContent>
+                <div className="cardMediaContainer">
+                  <CardMedia
+                    component="img"
+                    image={product.imgUrl}
+                    alt={product.name}
+                    className="cardMedia"
+                  />
+                </div>
+                <CardContent className="cardContent">
                   <Typography variant="h5" component="div">
                     {product.name}
                   </Typography>
