@@ -1,5 +1,5 @@
 import { Typography } from "antd";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 function Page1() {
   return (
@@ -12,4 +12,4 @@ function Page1() {
   );
 }
 
-export default Page1;
+export default withRouter(Page1);
