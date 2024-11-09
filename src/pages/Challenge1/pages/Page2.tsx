@@ -1,6 +1,6 @@
 import { Space, Typography } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
+import { useHistory, withRouter } from "react-router-dom";
 
 function Page2() {
   const history = useHistory();
@@ -15,4 +15,4 @@ function Page2() {
   );
 }
 
-export default Page2;
+export default withRouter(Page2);
