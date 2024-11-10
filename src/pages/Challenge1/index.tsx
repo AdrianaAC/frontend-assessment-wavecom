@@ -13,10 +13,10 @@ function Challenge1() {
         <h4 className="solutionH4">Problem resumed: </h4>
         <p className="solutionP">
           history.goBack() calling correctly changes the url to the previous url
-          registed, but the page does not update neither reflect any changes.
+          registered, but the page does not update neither reflect any changes.
           This comes for an issue caused when we have a nested child of a
           component that is being rendered by the Route component. Since our
-          components, Page1 and Page2, are not being redered directly by the
+          components, Page1 and Page2, are not being rendered directly by the
           Route and are nested in a Suspense component, they do not receive the
           router props automatically, leading to the component not being able to
           recognize the changes in the url.

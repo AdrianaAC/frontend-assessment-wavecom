@@ -40,7 +40,7 @@ const Products = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch products from the API
+  // Fetch products from the API on initial load
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -48,7 +48,7 @@ const Products = () => {
           "https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/"
         );
         setProducts(response.data);
-        setFilteredProducts(response.data); // Initialize filtered products
+        setFilteredProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -58,43 +58,52 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  // Handle search input changes
+  // Handle search input changes and filter products based on query
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
 
-    // Filter products based only on the 'name' property
     setFilteredProducts(
       products.filter((product) => product.name.toLowerCase().includes(query))
     );
   };
-  // Toggle modal visibility
+
+  // Open modal to add new product
   const handleOpen = () => setOpen(true);
+
+  // Close modal and reset form fields and error state
   const handleClose = () => {
     setOpen(false);
-    setError(null); // Clear error on modal close
+    setError(null);
+
+    // Reset the form fields to initial values
+    setNewProduct({
+      id: "",
+      name: "",
+      imgUrl: "",
+      desc: "",
+      price: 0,
+      year: new Date().getFullYear(),
+    });
   };
 
-  // Handle form input changes
+  // Handle input changes in the add product form and update newProduct state accordingly
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewProduct({ ...newProduct, [name]: value });
   };
 
-  // Handle product deletion
+  // Handle deletion of a product by sending a DELETE request to the API
   const handleDelete = async (productId: string) => {
     try {
-      // Send DELETE request to the API
       await axios.delete(
         `https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/${productId}`
       );
 
-      // Update the local state to remove the deleted product
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== productId)
       );
 
-      // Update the filtered products as well
       setFilteredProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== productId)
       );
@@ -103,6 +112,7 @@ const Products = () => {
     }
   };
 
+  // Handle submission of the new product form
   const handleSubmit = async () => {
     const isDuplicate = products.some(
       (product) => product.name.toLowerCase() === newProduct.name.toLowerCase()
@@ -112,29 +122,18 @@ const Products = () => {
       setError("A product with this name already exists.");
       return;
     }
+
     try {
-      // POST the new product to the API
       const response = await axios.post(
         "https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/",
         newProduct
       );
 
-      // Add the new product to the list if the POST is successful
       setProducts((prevProducts) => [...prevProducts, response.data]);
       setFilteredProducts((prevProducts) => [...prevProducts, response.data]); // Update filtered list
 
-      // Close the modal
+      // Close the modal and reset the form
       handleClose();
-
-      // Reset the form
-      setNewProduct({
-        id: "",
-        name: "",
-        imgUrl: "",
-        desc: "",
-        price: 0,
-        year: new Date().getFullYear(),
-      });
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -177,7 +176,6 @@ const Products = () => {
         </Button>
         <TextField
           label="Search Products"
-          variant="outlined"
           className="searchBar"
           value={searchQuery}
           onChange={handleSearchChange}
@@ -189,13 +187,12 @@ const Products = () => {
           filteredProducts.map((product) => (
             <div key={product.id} className="generalCard">
               <Card className="card" style={{ position: "relative" }}>
-                {/* Delete Button at Top-Right */}
                 <IconButton
                   aria-label="delete"
                   style={{
                     position: "absolute",
-                    top: "8px", // Adjust the top value if necessary
-                    right: "8px", // Adjust the right value if necessary
+                    top: "8px",
+                    right: "8px",
                     color: "#ccc",
                     zIndex: 1,
                   }}
@@ -231,55 +228,55 @@ const Products = () => {
         ) : (
           <p>No products available</p>
         )}
+
         <Modal
           open={open}
           onClose={handleClose}
           aria-labelledby="add-product-modal"
         >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "background.paper",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            <Typography variant="h6" component="h2">
+          <Box className="box">
+            <Typography variant="h6" component="h2" className="addTitle">
               Add New Product
             </Typography>
+
             {error && (
               <Typography color="error" variant="body2">
                 {error}
               </Typography>
             )}
+
             <TextField
               label="Name"
               name="name"
               value={newProduct.name}
               onChange={handleInputChange}
-              fullWidth
+              style={{
+                margin: 10,
+                borderRadius: 10,
+                border: "2px solid #3339ff",
+              }}
             />
             <TextField
               label="Image URL"
               name="imgUrl"
               value={newProduct.imgUrl}
               onChange={handleInputChange}
-              fullWidth
+              style={{
+                margin: 10,
+                borderRadius: 10,
+                border: "2px solid #3339ff",
+              }}
             />
             <TextField
               label="Description"
               name="desc"
               value={newProduct.desc}
               onChange={handleInputChange}
-              fullWidth
+              style={{
+                margin: 10,
+                borderRadius: 10,
+                border: "2px solid #3339ff",
+              }}
             />
             <TextField
               label="Price"
@@ -287,7 +284,11 @@ const Products = () => {
               type="number"
               value={newProduct.price}
               onChange={handleInputChange}
-              fullWidth
+              style={{
+                margin: 10,
+                borderRadius: 10,
+                border: "2px solid #3339ff",
+              }}
             />
             <TextField
               label="Year"
@@ -295,13 +296,24 @@ const Products = () => {
               type="number"
               value={newProduct.year}
               onChange={handleInputChange}
-              fullWidth
+              style={{
+                margin: 10,
+                borderRadius: 10,
+                border: "2px solid #3339ff",
+              }}
             />
-            <Box display="flex" justifyContent="space-between" mt={2}>
+
+            <Box
+              display="flex"
+              justifyContent="space-around"
+              style={{ padding: 10 }}
+              mt={2}
+            >
               <Button
                 variant="outlined"
                 color="secondary"
                 onClick={handleClose}
+                className="buttonForm"
               >
                 Cancel
               </Button>
@@ -309,6 +321,7 @@ const Products = () => {
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
+                className="buttonForm"
               >
                 Submit
               </Button>

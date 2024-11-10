@@ -14,11 +14,13 @@ const MapView = () => {
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1); // Track the currently highlighted item
 
-  //WaveCom locations
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const [activeIndex, setActiveIndex] = useState(-1);
+
   const locations: { [key: string]: { latitude: number; longitude: number } } =
     useMemo(
       () => ({
@@ -28,10 +30,11 @@ const MapView = () => {
           latitude: -25.952198177765005,
           longitude: 32.592926415365056,
         },
-        Hogwarts: { latitude: 57.546979, longitude: -5.815523 },
-        MonicasApartment: { latitude: 40.732306, longitude: -73.994218 },
-        PortAventuraPark: { latitude: 41.086686, longitude: 1.154858 },
-        SpainCasaDeMoeda: { latitude: 40.413774, longitude: -3.707398 },
+
+        // Hogwarts: { latitude: 57.546979, longitude: -5.815523 },
+        // MonicasApartment: { latitude: 40.732306, longitude: -73.994218 },
+        // PortAventuraPark: { latitude: 41.086686, longitude: 1.154858 },
+        // SpainCasaDeMoeda: { latitude: 40.413774, longitude: -3.707398 },
       }),
       []
     );
@@ -41,6 +44,7 @@ const MapView = () => {
     [locations]
   );
 
+  // Changes the view state to the specified location by index
   const goToLocation = useCallback(
     (index: number) => {
       const locationKey = locationKeys[index];
@@ -58,24 +62,28 @@ const MapView = () => {
     [locations, locationKeys]
   );
 
+  // Moves to the next location in the list
   const goToNextLocation = () => {
     if (currentIndex < locationKeys.length - 1) {
       goToLocation(currentIndex + 1);
     }
   };
 
+  // Moves to the previous location in the list
   const goToPreviousLocation = () => {
     if (currentIndex > 0) {
       goToLocation(currentIndex - 1);
     }
   };
 
+  // Handles search input changes, updates search query and dropdown visibility
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     setShowDropdown(true);
-    setActiveIndex(-1); // Reset active index on new input
+    setActiveIndex(-1);
   };
 
+  // Navigates to the selected location and closes the dropdown
   const handleLocationSelect = (key: string) => {
     const index = locationKeys.indexOf(key);
     goToLocation(index);
@@ -97,17 +105,14 @@ const MapView = () => {
   ) => {
     if (filteredLocations.length > 0) {
       if (event.key === "ArrowDown") {
-        // Move selection down
         setActiveIndex(
           (prevIndex) => (prevIndex + 1) % filteredLocations.length
         );
       } else if (event.key === "ArrowUp") {
-        // Move selection up
         setActiveIndex((prevIndex) =>
           prevIndex <= 0 ? filteredLocations.length - 1 : prevIndex - 1
         );
       } else if (event.key === "Enter") {
-        // Select the active item
         if (activeIndex >= 0 && activeIndex < filteredLocations.length) {
           handleLocationSelect(filteredLocations[activeIndex]);
         }
@@ -136,12 +141,13 @@ const MapView = () => {
                 anchor="bottom"
               >
                 <div className="markerIcon">📍</div>
-                <div className="markerLabel"> Wavecom {key}</div>
+                <div className="markerLabel">Wavecom {key}</div>
               </Marker>
             );
           })}
         </Map>
       </div>
+
       <div className="selectContainer">
         <label htmlFor="locationSearch">Search Location: </label>
         <input
@@ -149,7 +155,7 @@ const MapView = () => {
           id="locationSearch"
           value={searchQuery}
           onChange={handleSearchChange}
-          onKeyDown={handleSearchKeyDown} // Add keyboard listener
+          onKeyDown={handleSearchKeyDown}
           placeholder="Type a location..."
         />
         {showDropdown && (
@@ -173,6 +179,7 @@ const MapView = () => {
           </div>
         )}
       </div>
+
       <div className="navigationContainer">
         <button
           onClick={goToPreviousLocation}

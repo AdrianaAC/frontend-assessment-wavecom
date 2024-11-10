@@ -15,7 +15,6 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-// API permission simulation
 function fetchApiPermissions(userID: string) {
   const aclPermissions: { [k: string]: string } = {
     userID,
@@ -29,7 +28,6 @@ function fetchApiPermissions(userID: string) {
 
   return new Promise<typeof aclPermissions>((resolve) => {
     if (randomIntFromInterval(0, 1)) {
-      // Randomly remove root permission
       delete aclPermissions.root;
     }
     resolve(cloneDeep(aclPermissions));
@@ -37,7 +35,9 @@ function fetchApiPermissions(userID: string) {
 }
 
 function App() {
-  const [userPermissions, setUserPermissions] = useState<{ [k: string]: string }>({});
+  const [userPermissions, setUserPermissions] = useState<{
+    [k: string]: string;
+  }>({});
 
   useEffect(() => {
     const fetchPermissions = async () => {
@@ -46,7 +46,7 @@ function App() {
     };
 
     fetchPermissions();
-    const intervalId = setInterval(fetchPermissions, 30000);
+    const intervalId = setInterval(fetchPermissions, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -69,7 +69,6 @@ function App() {
     },
     {
       path: "/challenge2",
-      // Convert userPermissions to an array for Challenge2 only
       children: <Challenge2 userPermissions={Object.keys(userPermissions)} />,
       exact: true,
     },
