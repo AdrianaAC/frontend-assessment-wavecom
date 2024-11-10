@@ -6,7 +6,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const MapView = () => {
-  // Initial view state configuration for the map
   const [viewState, setViewState] = useState({
     longitude: -8.6317803,
     latitude: 40.6419645,
@@ -14,19 +13,14 @@ const MapView = () => {
     pitch: 60,
   });
 
-  // Tracks the current location index for navigation purposes
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Manages the current search query in the location input field
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Controls visibility of the dropdown list of filtered locations
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Tracks the active index in the dropdown, highlighting selected items
   const [activeIndex, setActiveIndex] = useState(-1);
 
-  // List of predefined locations with coordinates
   const locations: { [key: string]: { latitude: number; longitude: number } } =
     useMemo(
       () => ({
@@ -36,15 +30,15 @@ const MapView = () => {
           latitude: -25.952198177765005,
           longitude: 32.592926415365056,
         },
-        Hogwarts: { latitude: 57.546979, longitude: -5.815523 },
-        MonicasApartment: { latitude: 40.732306, longitude: -73.994218 },
-        PortAventuraPark: { latitude: 41.086686, longitude: 1.154858 },
-        SpainCasaDeMoeda: { latitude: 40.413774, longitude: -3.707398 },
+
+        // Hogwarts: { latitude: 57.546979, longitude: -5.815523 },
+        // MonicasApartment: { latitude: 40.732306, longitude: -73.994218 },
+        // PortAventuraPark: { latitude: 41.086686, longitude: 1.154858 },
+        // SpainCasaDeMoeda: { latitude: 40.413774, longitude: -3.707398 },
       }),
       []
     );
 
-  // List of location keys, derived from locations object
   const locationKeys: string[] = useMemo(
     () => Object.keys(locations),
     [locations]
@@ -98,7 +92,6 @@ const MapView = () => {
     setActiveIndex(-1);
   };
 
-  // Filters locations based on the current search query
   const filteredLocations = useMemo(
     () =>
       locationKeys.filter((key) =>
@@ -107,23 +100,19 @@ const MapView = () => {
     [searchQuery, locationKeys]
   );
 
-  // Handles keyboard navigation and selection within the dropdown
   const handleSearchKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (filteredLocations.length > 0) {
       if (event.key === "ArrowDown") {
-        // Move selection down
         setActiveIndex(
           (prevIndex) => (prevIndex + 1) % filteredLocations.length
         );
       } else if (event.key === "ArrowUp") {
-        // Move selection up
         setActiveIndex((prevIndex) =>
           prevIndex <= 0 ? filteredLocations.length - 1 : prevIndex - 1
         );
       } else if (event.key === "Enter") {
-        // Select the active item
         if (activeIndex >= 0 && activeIndex < filteredLocations.length) {
           handleLocationSelect(filteredLocations[activeIndex]);
         }
@@ -133,7 +122,6 @@ const MapView = () => {
 
   return (
     <div className="mapDashboard">
-      {/* Map container */}
       <div className="mapContainer">
         <Map
           {...viewState}
@@ -143,7 +131,6 @@ const MapView = () => {
           style={{ width: "calc(100vw - 120px)", height: "calc(100vh - 22px)" }}
           mapStyle="https://wms.wheregroup.com/tileserver/style/osm-liberty.json"
         >
-          {/* Renders markers for each location */}
           {locationKeys.map((key) => {
             const { latitude, longitude } = locations[key];
             return (
@@ -161,7 +148,6 @@ const MapView = () => {
         </Map>
       </div>
 
-      {/* Search input with dropdown for selecting locations */}
       <div className="selectContainer">
         <label htmlFor="locationSearch">Search Location: </label>
         <input
@@ -174,7 +160,6 @@ const MapView = () => {
         />
         {showDropdown && (
           <div className="dropdown">
-            {/* Renders dropdown items for filtered locations */}
             {filteredLocations.map((key, index) => (
               <button
                 key={key}
@@ -195,7 +180,6 @@ const MapView = () => {
         )}
       </div>
 
-      {/* Navigation buttons to cycle through locations */}
       <div className="navigationContainer">
         <button
           onClick={goToPreviousLocation}

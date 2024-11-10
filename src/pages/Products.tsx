@@ -16,7 +16,6 @@ import axios from "axios";
 import "./Products.css";
 
 const Products = () => {
-  // Define Product interface for type safety across product-related data
   interface Product {
     id: string;
     name: string;
@@ -26,14 +25,12 @@ const Products = () => {
     year: number;
   }
 
-  // State hooks to manage product data, UI states, and form data
-  const [products, setProducts] = useState<Product[]>([]); // Complete product list from API
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Filtered product list based on search
-  const [loading, setLoading] = useState(true); // Loading state for API fetch operation
-  const [open, setOpen] = useState(false); // Modal visibility state
-  const [error, setError] = useState<string | null>(null); // Error message state for validation errors
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [newProduct, setNewProduct] = useState<Product>({
-    // State for new product form data
     id: "",
     name: "",
     imgUrl: "",
@@ -41,7 +38,7 @@ const Products = () => {
     price: 0,
     year: new Date().getFullYear(),
   });
-  const [searchQuery, setSearchQuery] = useState(""); // Search query state
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch products from the API on initial load
   useEffect(() => {
@@ -51,11 +48,11 @@ const Products = () => {
           "https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/"
         );
         setProducts(response.data);
-        setFilteredProducts(response.data); // Initialize filtered products to the full list
+        setFilteredProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        setLoading(false); // Stop loading once data is fetched
+        setLoading(false);
       }
     };
     fetchProducts();
@@ -66,7 +63,6 @@ const Products = () => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
 
-    // Filter products based only on the 'name' property
     setFilteredProducts(
       products.filter((product) => product.name.toLowerCase().includes(query))
     );
@@ -78,7 +74,7 @@ const Products = () => {
   // Close modal and reset form fields and error state
   const handleClose = () => {
     setOpen(false);
-    setError(null); // Clear error on modal close
+    setError(null);
 
     // Reset the form fields to initial values
     setNewProduct({
@@ -104,7 +100,6 @@ const Products = () => {
         `https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/${productId}`
       );
 
-      // Update local product and filtered product lists after deletion
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== productId)
       );
@@ -119,7 +114,6 @@ const Products = () => {
 
   // Handle submission of the new product form
   const handleSubmit = async () => {
-    // Check for duplicate product name to avoid adding a product with the same name
     const isDuplicate = products.some(
       (product) => product.name.toLowerCase() === newProduct.name.toLowerCase()
     );
@@ -130,7 +124,6 @@ const Products = () => {
     }
 
     try {
-      // POST the new product to the API and update product lists on success
       const response = await axios.post(
         "https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/",
         newProduct
@@ -190,12 +183,10 @@ const Products = () => {
         />
       </div>
       <div className="cardsContainer">
-        {/* Conditional rendering of products or a message when no products are available */}
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
             <div key={product.id} className="generalCard">
               <Card className="card" style={{ position: "relative" }}>
-                {/* Delete Button positioned at the top-right corner of the card */}
                 <IconButton
                   aria-label="delete"
                   style={{
@@ -238,7 +229,6 @@ const Products = () => {
           <p>No products available</p>
         )}
 
-        {/* Modal for adding a new product */}
         <Modal
           open={open}
           onClose={handleClose}
@@ -248,13 +238,13 @@ const Products = () => {
             <Typography variant="h6" component="h2" className="addTitle">
               Add New Product
             </Typography>
-            {/* Display error message if duplicate product name exists */}
+
             {error && (
               <Typography color="error" variant="body2">
                 {error}
               </Typography>
             )}
-            {/* Form fields for new product */}
+
             <TextField
               label="Name"
               name="name"
@@ -312,7 +302,7 @@ const Products = () => {
                 border: "2px solid #3339ff",
               }}
             />
-            {/* Form buttons for canceling or submitting the form */}
+
             <Box
               display="flex"
               justifyContent="space-around"
