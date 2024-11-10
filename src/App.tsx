@@ -37,7 +37,9 @@ function fetchApiPermissions(userID: string) {
 }
 
 function App() {
-  const [userPermissions, setUserPermissions] = useState<{ [k: string]: string }>({});
+  const [userPermissions, setUserPermissions] = useState<{
+    [k: string]: string;
+  }>({});
 
   useEffect(() => {
     const fetchPermissions = async () => {
@@ -46,7 +48,7 @@ function App() {
     };
 
     fetchPermissions();
-    const intervalId = setInterval(fetchPermissions, 30000);
+    const intervalId = setInterval(fetchPermissions, 1000);
 
     return () => clearInterval(intervalId);
   }, []);

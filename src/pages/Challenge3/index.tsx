@@ -63,7 +63,7 @@ function Challenge3() {
           By refactoring getRandomNumberApi into a function we get a api request
           and a returning promise for each time this function is called, thous
           allowing a real-time update for randomApi. By adding a .catch block,
-          and loging the error in this situation, we are able to unsure
+          and logging the error in this situation, we are able to unsure
           scalability of the code. In useEffect, we made sure there theres a
           cleaning process when the component unmounts.
         </p>

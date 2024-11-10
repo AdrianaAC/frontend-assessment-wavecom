@@ -1,5 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
+.brSolution {
+  justify-content: center;
+  margin: 0 auto;
+  margin-bottom: 0.5rem;
+  width: 90%;
+  height: 5px;
+  background-color: #003366;
+}
+
 .solutionContainer {
   padding: 1rem;
   font-family: "Ubuntu", sans-serif;
@@ -25,12 +34,4 @@
   margin-bottom: 0.5rem;
   color: black;
   text-align: justify;
-}
-
-.brSolution {
-  justify-content: center;
-  margin-bottom: 0.5rem;
-  weight: 50%;
-  height: 5px;
-  background-color: #003366;
 }

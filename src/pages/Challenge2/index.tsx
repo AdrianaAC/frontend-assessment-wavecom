@@ -35,14 +35,14 @@ function Challenge2({ userPermissions }: Challenge2Props) {
           called in a userEffect hook on App component, and the userPermissions
           state is updated with the fetched data. The Challenge2 component
           receives the userPermissions state as a prop and checks if the user
-          has root access, dinamically rendering a status and a message.
+          has root access, dynamically rendering a status and a message.
         </p>
         <hr className="brSolution" />
         <h4 className="solutionH4">How to test: </h4>
         <p className="solutionP">
           Run the application, on Challenge 2 page observe the badge status for
           root access. It will update with a spawn of seconds, and it will
-          indicate if the user has root access (green) orjhas not root access
+          indicate if the user has root access (green) or has not root access
           (red).
         </p>
       </div>

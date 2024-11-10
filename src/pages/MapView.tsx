@@ -6,6 +6,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const MapView = () => {
+  // Initial view state configuration for the map
   const [viewState, setViewState] = useState({
     longitude: -8.6317803,
     latitude: 40.6419645,
@@ -13,12 +14,19 @@ const MapView = () => {
     pitch: 60,
   });
 
+  // Tracks the current location index for navigation purposes
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1); // Track the currently highlighted item
 
-  //WaveCom locations
+  // Manages the current search query in the location input field
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Controls visibility of the dropdown list of filtered locations
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Tracks the active index in the dropdown, highlighting selected items
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  // List of predefined locations with coordinates
   const locations: { [key: string]: { latitude: number; longitude: number } } =
     useMemo(
       () => ({
@@ -36,11 +44,13 @@ const MapView = () => {
       []
     );
 
+  // List of location keys, derived from locations object
   const locationKeys: string[] = useMemo(
     () => Object.keys(locations),
     [locations]
   );
 
+  // Changes the view state to the specified location by index
   const goToLocation = useCallback(
     (index: number) => {
       const locationKey = locationKeys[index];
@@ -58,24 +68,28 @@ const MapView = () => {
     [locations, locationKeys]
   );
 
+  // Moves to the next location in the list
   const goToNextLocation = () => {
     if (currentIndex < locationKeys.length - 1) {
       goToLocation(currentIndex + 1);
     }
   };
 
+  // Moves to the previous location in the list
   const goToPreviousLocation = () => {
     if (currentIndex > 0) {
       goToLocation(currentIndex - 1);
     }
   };
 
+  // Handles search input changes, updates search query and dropdown visibility
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     setShowDropdown(true);
-    setActiveIndex(-1); // Reset active index on new input
+    setActiveIndex(-1);
   };
 
+  // Navigates to the selected location and closes the dropdown
   const handleLocationSelect = (key: string) => {
     const index = locationKeys.indexOf(key);
     goToLocation(index);
@@ -84,6 +98,7 @@ const MapView = () => {
     setActiveIndex(-1);
   };
 
+  // Filters locations based on the current search query
   const filteredLocations = useMemo(
     () =>
       locationKeys.filter((key) =>
@@ -92,6 +107,7 @@ const MapView = () => {
     [searchQuery, locationKeys]
   );
 
+  // Handles keyboard navigation and selection within the dropdown
   const handleSearchKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
@@ -117,6 +133,7 @@ const MapView = () => {
 
   return (
     <div className="mapDashboard">
+      {/* Map container */}
       <div className="mapContainer">
         <Map
           {...viewState}
@@ -126,6 +143,7 @@ const MapView = () => {
           style={{ width: "calc(100vw - 120px)", height: "calc(100vh - 22px)" }}
           mapStyle="https://wms.wheregroup.com/tileserver/style/osm-liberty.json"
         >
+          {/* Renders markers for each location */}
           {locationKeys.map((key) => {
             const { latitude, longitude } = locations[key];
             return (
@@ -136,12 +154,14 @@ const MapView = () => {
                 anchor="bottom"
               >
                 <div className="markerIcon">📍</div>
-                <div className="markerLabel"> Wavecom {key}</div>
+                <div className="markerLabel">Wavecom {key}</div>
               </Marker>
             );
           })}
         </Map>
       </div>
+
+      {/* Search input with dropdown for selecting locations */}
       <div className="selectContainer">
         <label htmlFor="locationSearch">Search Location: </label>
         <input
@@ -149,11 +169,12 @@ const MapView = () => {
           id="locationSearch"
           value={searchQuery}
           onChange={handleSearchChange}
-          onKeyDown={handleSearchKeyDown} // Add keyboard listener
+          onKeyDown={handleSearchKeyDown}
           placeholder="Type a location..."
         />
         {showDropdown && (
           <div className="dropdown">
+            {/* Renders dropdown items for filtered locations */}
             {filteredLocations.map((key, index) => (
               <button
                 key={key}
@@ -173,6 +194,8 @@ const MapView = () => {
           </div>
         )}
       </div>
+
+      {/* Navigation buttons to cycle through locations */}
       <div className="navigationContainer">
         <button
           onClick={goToPreviousLocation}
