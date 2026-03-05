@@ -1,4 +1,42 @@
+# Wavecom Frontend Assessment (React + TypeScript)
 
+This repository contains my solution for a Wavecom frontend technical assessment.  
+Focus areas: React + TypeScript, UI behavior, API integration, and performance/debugging.
+
+## ✅ Implemented
+
+### Performance bug
+- Identified the root cause of UI slowdown over time
+- Applied fix: (add 1–2 lines explaining what you changed)
+
+### Map View
+- Added pins for Wavecom Portugal, Spain, and Mozambique
+- Added quick navigation between locations (buttons/dropdown/search)
+
+### Products (CRUD)
+- Lists products from Beeceptor CRUD API
+- Add product form (with validation)
+- Prevent duplicate names
+- Search by product name
+- Delete products
+
+### Challenge 1 – Navigation bug
+- Fixed browser back / “Go back” behavior where URL changed but UI didn’t
+
+### Challenge 2 – Permissions badge
+- Badge updates in real time based on `userPermissions` changes
+
+### Challenge 3 – Recurring API request
+- Fixed state update while keeping Promise-based flow
+
+## 🧰 Tech Stack
+React • TypeScript • Vite • Tailwind • (antd if you used it) • react-map-gl / maplibre
+
+## ▶️ Run locally
+```bash
+npm install
+npm run dev
+```
 
 **Desafio Frontend** 
 
