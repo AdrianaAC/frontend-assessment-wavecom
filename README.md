@@ -9,7 +9,7 @@ Focus areas: React + TypeScript, UI behavior, API integration, and performance/d
 
 # 🎬 Demo
 
-![[MapandChallengesDemo](./screen.gif)](frontend-assessment-wavecom.vercel.app)
+![MapandChallengesDemo](./screen.gif)(frontend-assessment-wavecom.vercel.app)
 
 
 ## ✅ Implemented
