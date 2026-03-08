@@ -1,45 +1,59 @@
 import { useEffect, useState } from "react";
 import "./index.css";
 
-// Function to get a new random number with potential for further async work
-const getRandomNumberApi = () => {
-  return new Promise<number>((resolve, reject) => {
-    setTimeout(() => {
-      fetch(
-        "https://corsproxy.io/?" +
-          encodeURIComponent(
-            "https://www.randomnumberapi.com/api/v1.0/randomnumber"
-          )
-      )
-        .then((d) => d.json())
-        .then((data) => {
-          const number = data[0];
+const RANDOM_NUMBER_URL =
+  "https://corsproxy.io/?" +
+  encodeURIComponent("https://www.randomnumberapi.com/api/v1.0/randomnumber");
 
-          // Potentially do more work here
-          console.log("Fetched number:", number);
+async function getRandomNumberApi(timeoutMs = 5000) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
-          resolve(number);
-        })
-        .catch((error) => reject(error));
-    }, 1000);
-  });
-};
+  try {
+    const response = await fetch(RANDOM_NUMBER_URL, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error(`Random number API failed with status ${response.status}`);
+    }
+
+    const data = (await response.json()) as number[];
+    return data[0];
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
 
 function Challenge3() {
   const [randomApi, setRandomApi] = useState<number | null>(null);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      getRandomNumberApi()
-        .then((num) => {
-          setRandomApi(num);
-        })
-        .catch((error) => {
-          console.error("Error fetching random number:", error);
-        });
-    }, 1000);
+    let isActive = true;
+    let timeoutId: number | undefined;
 
-    return () => clearInterval(intervalId);
+    const pollRandomNumber = async () => {
+      try {
+        const nextNumber = await getRandomNumberApi();
+        if (isActive) {
+          setRandomApi(nextNumber);
+        }
+      } catch (error) {
+        if (isActive) {
+          console.error("Error fetching random number:", error);
+        }
+      } finally {
+        if (isActive) {
+          timeoutId = window.setTimeout(pollRandomNumber, 1000);
+        }
+      }
+    };
+
+    pollRandomNumber();
+
+    return () => {
+      isActive = false;
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   return (

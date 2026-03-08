@@ -15,6 +15,10 @@ import { Add, Close } from "@mui/icons-material";
 import axios from "axios";
 import "./Products.css";
 
+const PRODUCTS_API_URL =
+  "https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/";
+const API_TIMEOUT_MS = 8000;
+
 const Products = () => {
   interface Product {
     id: string;
@@ -45,12 +49,14 @@ const Products = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/"
+          PRODUCTS_API_URL,
+          { timeout: API_TIMEOUT_MS }
         );
         setProducts(response.data);
         setFilteredProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+        setError("Could not load products. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -97,7 +103,8 @@ const Products = () => {
   const handleDelete = async (productId: string) => {
     try {
       await axios.delete(
-        `https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/${productId}`
+        `${PRODUCTS_API_URL}${productId}`,
+        { timeout: API_TIMEOUT_MS }
       );
 
       setProducts((prevProducts) =>
@@ -125,8 +132,9 @@ const Products = () => {
 
     try {
       const response = await axios.post(
-        "https://ca0352437e66bc41da6a.free.beeceptor.com/api/wavecomProducts/",
-        newProduct
+        PRODUCTS_API_URL,
+        newProduct,
+        { timeout: API_TIMEOUT_MS }
       );
 
       setProducts((prevProducts) => [...prevProducts, response.data]);
@@ -165,6 +173,11 @@ const Products = () => {
       >
         Products
       </Typography>
+      {error && (
+        <Typography color="error" sx={{ marginBottom: 2 }}>
+          {error}
+        </Typography>
+      )}
       <div className="addContainer" style={{ display: "flex", gap: "16px" }}>
         <Button
           variant="contained"
