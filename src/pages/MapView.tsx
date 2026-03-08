@@ -1,6 +1,6 @@
-import Map, { Marker } from "react-map-gl/maplibre";
+import Map, { Marker, ViewStateChangeEvent } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useState, useMemo, useCallback } from "react";
+import { memo, useState, useMemo, useCallback } from "react";
 import "./MapView.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -14,11 +14,8 @@ const MapView = () => {
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const [searchQuery, setSearchQuery] = useState("");
-
   const [showDropdown, setShowDropdown] = useState(false);
-
   const [activeIndex, setActiveIndex] = useState(-1);
 
   const locations: { [key: string]: { latitude: number; longitude: number } } =
@@ -30,11 +27,6 @@ const MapView = () => {
           latitude: -25.952198177765005,
           longitude: 32.592926415365056,
         },
-
-        // Hogwarts: { latitude: 57.546979, longitude: -5.815523 },
-        // MonicasApartment: { latitude: 40.732306, longitude: -73.994218 },
-        // PortAventuraPark: { latitude: 41.086686, longitude: 1.154858 },
-        // SpainCasaDeMoeda: { latitude: 40.413774, longitude: -3.707398 },
       }),
       []
     );
@@ -44,7 +36,6 @@ const MapView = () => {
     [locations]
   );
 
-  // Changes the view state to the specified location by index
   const goToLocation = useCallback(
     (index: number) => {
       const locationKey = locationKeys[index];
@@ -62,28 +53,24 @@ const MapView = () => {
     [locations, locationKeys]
   );
 
-  // Moves to the next location in the list
   const goToNextLocation = () => {
     if (currentIndex < locationKeys.length - 1) {
       goToLocation(currentIndex + 1);
     }
   };
 
-  // Moves to the previous location in the list
   const goToPreviousLocation = () => {
     if (currentIndex > 0) {
       goToLocation(currentIndex - 1);
     }
   };
 
-  // Handles search input changes, updates search query and dropdown visibility
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     setShowDropdown(true);
     setActiveIndex(-1);
   };
 
-  // Navigates to the selected location and closes the dropdown
   const handleLocationSelect = (key: string) => {
     const index = locationKeys.indexOf(key);
     goToLocation(index);
@@ -120,31 +107,42 @@ const MapView = () => {
     }
   };
 
+  const handleMapMove = useCallback((evt: ViewStateChangeEvent) => {
+    const next = evt.viewState;
+    setViewState({
+      longitude: next.longitude,
+      latitude: next.latitude,
+      zoom: next.zoom,
+      pitch: next.pitch,
+    });
+  }, []);
+
+  const markers = useMemo(
+    () =>
+      locationKeys.map((key) => {
+        const { latitude, longitude } = locations[key];
+        return (
+          <Marker key={key} longitude={longitude} latitude={latitude} anchor="bottom">
+            <div className="markerIcon">📍</div>
+            <div className="markerLabel">Wavecom {key}</div>
+          </Marker>
+        );
+      }),
+    [locationKeys, locations]
+  );
+
   return (
     <div className="mapDashboard">
       <div className="mapContainer">
         <Map
           {...viewState}
-          onMove={(evt) => setViewState(evt.viewState)}
+          onMove={handleMapMove}
           attributionControl={false}
           hash
           style={{ width: "calc(100vw - 120px)", height: "calc(100vh - 22px)" }}
           mapStyle="https://wms.wheregroup.com/tileserver/style/osm-liberty.json"
         >
-          {locationKeys.map((key) => {
-            const { latitude, longitude } = locations[key];
-            return (
-              <Marker
-                key={key}
-                longitude={longitude}
-                latitude={latitude}
-                anchor="bottom"
-              >
-                <div className="markerIcon">📍</div>
-                <div className="markerLabel">Wavecom {key}</div>
-              </Marker>
-            );
-          })}
+          {markers}
         </Map>
       </div>
 
@@ -208,4 +206,4 @@ const MapView = () => {
   );
 };
 
-export default MapView;
+export default memo(MapView);
