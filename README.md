@@ -3,6 +3,15 @@
 This repository contains my solution for a Wavecom frontend technical assessment.  
 Focus areas: React + TypeScript, UI behavior, API integration, and performance/debugging.
 
+# 📸 Preview
+
+![MapandChallenges](./screen.png)
+
+# 🎬 Demo
+
+[![[MapandChallengesDemo](./screen.gif)](frontend-assessment-wavecom.vercel.app)
+
+
 ## ✅ Implemented
 
 ### Performance bug
